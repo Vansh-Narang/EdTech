@@ -263,14 +263,15 @@ exports.changePassword = async (req, res) => {
     //update password in DB with new password
 
     if (newCpassword === newPassword) {
-        const response = await User.findOneAndUpdate({
-            email: email,
-        },
-            { password: newCpassword }
+        const hashedPassword = bcrypt.hash(newCpassword, 10)
+        const response = await User.findOneAndUpdate(
+            { email: email, },
+            { password: hashedPassword }
         )
+        console.log(response)
     }
     //send mail -password updated
-    const sendMail = mailSender(email, "Password updated");
+    const sendMail = await mailSender(email, "Password updated");
     console.log(sendMail)
     //return response
     res.status(200).json({

@@ -265,12 +265,9 @@ exports.changePassword = async (req, res) => {
     if (newCpassword === newPassword) {
         const response = await User.findOneAndUpdate({
             email: email,
-        })
-        try {
-            response.password = newPassword
-        } catch (error) {
-            console.log("Password cannot updated", error)
-        }
+        },
+            { password: newCpassword }
+        )
     }
     //send mail -password updated
     const sendMail = mailSender(email, "Password updated");

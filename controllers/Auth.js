@@ -243,39 +243,47 @@ exports.login = async (req, res) => {
 exports.changePassword = async (req, res) => {
     //get data
     //get old pass , new pass, confirm password
-    const { email, password, newPassword, newCpassword } = req.body;
+    try {
+        const { email, password, newPassword, newCpassword } = req.body;
 
-    const existUser = await User.findOne({ email })
-    if (!existUser) {
-        return res.status(401).json({
-            success: false,
-            message: "The user with this email doesn't exosts"
+        const existUser = await User.findOne({ email })
+        if (!existUser) {
+            return res.status(401).json({
+                success: false,
+                message: "The user with this email doesn't exosts"
+            })
+        }
+        //validation all and password with confirm password
+        if (!password || !newPassword || !newCpassword) {
+            return res.status(400).json({
+                status: false,
+                message: "Enter all fields of password"
+            })
+        }
+
+        //update password in DB with new password
+
+        if (newCpassword === newPassword) {
+            const hashedPassword = bcrypt.hash(newCpassword, 10)
+            const response = await User.findOneAndUpdate(
+                { email: email, },
+                { password: hashedPassword }
+            )
+            console.log(response)
+        }
+        //send mail -password updated
+        const sendMail = await mailSender(email, "Password updated");
+        console.log(sendMail)
+        //return response
+        res.status(200).json({
+            success: true,
+            message: "Password updated"
+        })
+    } catch (error) {
+        res.status(400).json({
+            messsage: "Passwords do not match",
+            error: error,
+            success: false
         })
     }
-    //validation all and password with confirm password
-    if (!password || !newPassword || !newCpassword) {
-        return res.status(400).json({
-            status: false,
-            message: "Enter all fields of password"
-        })
-    }
-
-    //update password in DB with new password
-
-    if (newCpassword === newPassword) {
-        const hashedPassword = bcrypt.hash(newCpassword, 10)
-        const response = await User.findOneAndUpdate(
-            { email: email, },
-            { password: hashedPassword }
-        )
-        console.log(response)
-    }
-    //send mail -password updated
-    const sendMail = await mailSender(email, "Password updated");
-    console.log(sendMail)
-    //return response
-    res.status(200).json({
-        success: true,
-        message: "Password updated"
-    })
 }

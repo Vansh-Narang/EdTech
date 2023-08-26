@@ -4,6 +4,7 @@ const otpgenerator = require("otp-generator")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 require("dotenv").config()
+const mailSender = require("../utils/mailSender")
 //otp send
 
 //FLOW->req.body se email le aao
@@ -189,7 +190,7 @@ exports.login = async (req, res) => {
                 message: "User is not registered yet, please sign up"
             })
         }
-        
+
         //generate jwt token after matching the password
 
         if (await bcrypt.compare(password, user.password)) {
@@ -238,3 +239,45 @@ exports.login = async (req, res) => {
 
 
 //change password
+
+exports.changePassword = async (req, res) => {
+    //get data
+    //get old pass , new pass, confirm password
+    const { email, password, newPassword, newCpassword } = req.body;
+
+    const existUser = await User.findOne({ email })
+    if (!existUser) {
+        return res.status(401).json({
+            success: false,
+            message: "The user with this email doesn't exosts"
+        })
+    }
+    //validation all and password with confirm password
+    if (!password || !newPassword || !newCpassword) {
+        return res.status(400).json({
+            status: false,
+            message: "Enter all fields of password"
+        })
+    }
+
+    //update password in DB with new password
+
+    if (newCpassword === newPassword) {
+        const response = await User.findOneAndUpdate({
+            email: email,
+        })
+        try {
+            response.password = newPassword
+        } catch (error) {
+            console.log("Password cannot updated", error)
+        }
+    }
+    //send mail -password updated
+    const sendMail = mailSender(email, "Password updated");
+    console.log(sendMail)
+    //return response
+    res.status(200).json({
+        success: true,
+        message: "Password updated"
+    })
+}

@@ -20,7 +20,7 @@ exports.auth = async (req, res, next) => {
         }
         //verify the token using the secret key
         try {
-            const decode = await jwt.verify(token, process.env.JWT_SECRET)
+            const decode = jwt.verify(token, process.env.JWT_SECRET)
             console.log(decode)
             req.user = decode
         } catch (error) {
@@ -38,8 +38,30 @@ exports.auth = async (req, res, next) => {
         })
     }
 }
-//isStudent
+//Humne payload me role (login ke time pr)daala hai aur authorization wale middleware me role add kiya hai jisse hum check karte hain ki 
+//wo student hai admin ya instructor hai
 
+//isStudent
+exports.isStudent = async (req, res, next) => {
+    try {
+        //1st method -> role se check kr lo
+
+        if (req.user.accountType !== 'Student') {
+            return res.status(403).json({
+                message: "Role is not a student, protected route for student",
+                success: false,
+            })
+        }
+        next()
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({
+            message: "Cannot get student role , please try again",
+            error: error,
+            success: false
+        })
+    }
+}
 
 //is Instructor
 

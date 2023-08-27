@@ -20,6 +20,7 @@ exports.auth = async (req, res, next) => {
         }
         //verify the token using the secret key
         try {
+            //verify method verify the secret key with the token recieved
             const decode = jwt.verify(token, process.env.JWT_SECRET)
             console.log(decode)
             req.user = decode

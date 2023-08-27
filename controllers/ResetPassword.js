@@ -53,3 +53,54 @@ exports.resetPasswordToken = async (req, res) => {
 }
 //reset password token(with expiry time)
 //reset password (db update)
+exports.resetPassword = async (req, res) => {
+    try {
+        //data fetch
+        const { password, confirmPassword, token } = req.body
+        //validation
+        if (!password || !confirmPassword || !token) {
+            return res.status(401).json({
+                message: 'All fields are required',
+                success: false,
+            })
+        }
+        if (password !== confirmPassword) {
+            return res.status(401).json({
+                message: "Passwords dont match",
+                success: false,
+            })
+        }
+        //user ki entry token se nikalo
+        const userDetails = await User.findOne({ token: token })
+        //if not entry -> invalid token
+        if (!userDetails) {
+            return res.status(401).json({
+                success: false,
+                message: "Token is invalid",
+            })
+        }
+        //token time not expired
+        if (userDetails.resetPasswordExpires < Date.now()) {
+            return res.status(401).json({
+                success: false,
+                message: "Token is expired"
+            })
+        }
+        //user ke data ko update kro (password ko hash krke)
+        const hashedPassword = await password.bcrypt(password, 10);
+        await User.findOne({ token: token },
+            { password: hashedPassword },
+            { new: true }
+        )
+        //return response
+        res.status(200).json({
+            message: "Done Successfully",
+            success: true,
+        })
+    } catch (error) {
+        res.status(401).json({
+            message: "Cant reset password",
+            success: false,
+        })
+    }
+}

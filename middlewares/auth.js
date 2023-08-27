@@ -64,5 +64,44 @@ exports.isStudent = async (req, res, next) => {
 }
 
 //is Instructor
+exports.isInstructor = async (req, res, next) => {
+    try {
+        //1st method -> role se check kr lo
 
+        if (req.user.accountType !== 'Instructor') {
+            return res.status(403).json({
+                message: "Role is not a Instructor, protected route for Instructor",
+                success: false,
+            })
+        }
+        next()
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({
+            message: "Cannot get student role , please try again",
+            error: error,
+            success: false
+        })
+    }
+}
 //isAdmin
+exports.isAdmin = async (req, res, next) => {
+    try {
+        //1st method -> role se check kr lo
+
+        if (req.user.accountType !== 'Admin') {
+            return res.status(403).json({
+                message: "Role is not a Admin, protected route for Admin",
+                success: false,
+            })
+        }
+        next()
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({
+            message: "Cannot get student role , please try again",
+            error: error,
+            success: false
+        })
+    }
+}

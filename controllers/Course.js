@@ -87,6 +87,31 @@ exports.createCourse = async (req, res) => {
 }
 
 //get all courses
+exports.showAllCourses = async (req, res) => {
+    try {
 
+        //to do changes the below statemnets incrremently
+        const allCourses = await Course.find({}, {
+            courseName: true,
+            price: true,
+            thumbnail: true,
+            instructor: true,
+            ratingAndReviews: true,
+            studentsEnrolled: true
+        })
 
-//tags and course .js files are only be used by admin through the middleware
+        return res.status(200).json({
+            success: true,
+            message: "All courses found",
+            data: allCourses
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({
+            success: false,
+            message: 'Cannot fetch all course'
+        })
+    }
+}
+
+//tags and course.js files are only be used by admin through the middleware

@@ -91,6 +91,10 @@ exports.deleteSection = async (req, res) => {
         //make the call to db to delete the section
         await Section.findByIdAndDelete(sectionId);
 
+        //also delete the section id from course-> bcz when we created the section we push the id to the course so when deleted we should delete the same from course model
+
+
+
         res.status(200).json({
             success: true,
             message: "Section deleted successfully",

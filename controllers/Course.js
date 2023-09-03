@@ -1,7 +1,9 @@
 const Course = require("../models/Course")
+//course is the schema / model
 const Tag = require("../models/Tag")
+//tag is the schema / model
 const User = require("../models/User")
-
+//user is the schema / model
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
 
 //create and fetch

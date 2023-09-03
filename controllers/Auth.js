@@ -107,6 +107,7 @@ exports.signup = async (req, res) => {
             })
         }
         //find most recently otp
+        //verification of mail when signUp
         const recentOTP = await OTP.findOne({ email }).sort({ createdAt: -1 }).limit(1)
         console.log(recentOTP)
 
@@ -204,6 +205,7 @@ exports.login = async (req, res) => {
                 expiresIn: "2h"
             })
             user.token = token
+            //adding the token to the response data and making password null in the response after storing in the database
             user.password = undefined;
 
             const options = {

@@ -24,6 +24,8 @@ exports.resetPasswordToken = async (req, res) => {
         const token = crypto.randomUUID();
         //3000 for front end (generate the token)
         //update user by adding token and expiration time
+
+        //jiske pass token hoga wo he reset kr payega password so generate a token add in url and send to user through the mail
         const updatedDetails = await User.findOneAndUpdate(
             { email: email },
             {
@@ -89,6 +91,8 @@ exports.resetPassword = async (req, res) => {
         //user ke data ko update kro (password ko hash krke)
         const hashedPassword = await password.bcrypt(password, 10);
         await User.findOne({ token: token },
+            
+            //to do:::::::::::::check the method 
             { password: hashedPassword },
             { new: true }
         )

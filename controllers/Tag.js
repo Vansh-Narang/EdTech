@@ -33,6 +33,7 @@ exports.createTag = async (req, res) => {
 //get all tags
 exports.showAllTags = async (req, res) => {
     try {
+        //return all the tags in db but they must have name and description
         const allTags = await Tag.find({}, { name: true, description: true })
         res.status(200).json({
             success: true,

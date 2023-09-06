@@ -135,5 +135,4 @@ exports.getAllRating = async (req, res) => {
     }
 }
 
-
 //get all rating and reviews for specific course

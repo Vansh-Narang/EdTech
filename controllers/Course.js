@@ -117,3 +117,53 @@ exports.showAllCourses = async (req, res) => {
 }
 
 //tags and course.js files are only be used by admin through the middleware
+
+//course entire details to be returned make a controller for the same
+exports.getCourseDetails = async (req, res) => {
+    try {
+        //get the course id
+        const { courseId } = req.body;
+        //validate
+        if (!courseId) {
+            return res.status(403).json({
+                success: false,
+                message: "Course id not found"
+            })
+        }
+        //find and populate because we will get the object id
+        const courseDetails = await Course.find(
+            { _id: courseId }).populate({
+                path: "instrutor",
+                //instructor ko popluate fir uske aander addittional Details usse bhi populate
+                populate: {
+                    path: "additionalDetails"
+                }
+            })
+            .populate("category")
+            .populate("ratingAndReviews")
+            .populate({
+                path: "courseContent",
+                populate: {
+                    path: "subSection"
+                }
+            })
+            .exec();
+        //return response
+        if (!courseDetails) {
+            return res.status(400).json({
+                success: true,
+                message: "Course details couldnot be fetched"
+            })
+        }
+        res.status(200).json({
+            success: true,
+            message: "Success fetched data"
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching course all data"
+        })
+    }
+}

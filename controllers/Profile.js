@@ -3,7 +3,7 @@
 const Profile = require("../models/Profile")
 const User = require("../models/User")
 
-
+//update profile
 exports.updateProfile = async (req, res) => {
     try {//req user humesha id lata hai aur role aur email bhi
 
@@ -81,6 +81,7 @@ exports.deleteAccount = async (req, res) => {
     }
 }
 
+//get user details
 exports.getUserDetails = async (req, res) => {
     try {
         //fetch data
@@ -107,3 +108,7 @@ exports.getUserDetails = async (req, res) => {
         })
     }
 }
+
+//two exports are left
+exports.getEnrolledCourses = async (req, res) => { }
+exports.updateDisplayPicture = async (req, res) => { }

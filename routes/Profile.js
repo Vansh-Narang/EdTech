@@ -2,9 +2,15 @@ const express = require('express')
 const router = express.Router()
 const { auth } = require("../middlewares/auth")
 
-const { updateProfile, deleteAccount, getUserDetails } = require("../controllers/Profile")
+const { updateProfile, deleteAccount, getUserDetails, getEnrolledCourses, updateDisplayPicture } = require("../controllers/Profile")
 
 router.post("/updateProfile", updateProfile)
-router.post("/deleteAccount", deleteAccount)
-router.post("/getUserDetails", getUserDetails)
+router.delete("/deleteAccount", deleteAccount)
+router.get("/getUserDetails", getUserDetails)
 
+//get enrolled courses
+
+//auth is passed as the middlewares to check the authorization has the access to change or update the things written below
+router.get("/getEnrolledCourses", auth, getEnrolledCourses)
+//put is use to update the display picture
+router.put("/updateDisplayPicture", auth, updateDisplayPicture)

@@ -19,8 +19,7 @@ exports.sendOTP = async (req, res) => {
         const { email } = req.body
 
         //check if user already exist
-        const checkUserpresent = await User.find({ email })
-
+        const checkUserpresent = await User.findOne({ email })
 
         //if user already exist then return a response
         if (checkUserpresent) {
@@ -109,10 +108,10 @@ exports.signup = async (req, res) => {
         //find most recently otp
         //verification of mail when signUp
         const recentOTP = await OTP.findOne({ email }).sort({ createdAt: -1 }).limit(1)
-        console.log(recentOTP)
+        console.log("Recent otp is", recentOTP)
 
         //validate otp
-        if (recentOTP.length == 0) {
+        if (recentOTP.length() == 0) {
             //otp not found
             return res.status(404).json({
                 message: "otp not valid ",
@@ -152,12 +151,12 @@ exports.signup = async (req, res) => {
         //return res
         res.status(200).json({
             success: true,
-            message: "user created successfully"
+            message: "User created successfully"
         })
     } catch (error) {
         console.log(error)
         return res.status(400).json({
-            message: "not able signup"
+            message: "Not able to signup"
         })
     }
 }

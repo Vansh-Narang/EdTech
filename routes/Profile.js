@@ -14,3 +14,6 @@ router.get("/getUserDetails", getUserDetails)
 router.get("/getEnrolledCourses", auth, getEnrolledCourses)
 //put is use to update the display picture
 router.put("/updateDisplayPicture", auth, updateDisplayPicture)
+
+
+module.exports = router

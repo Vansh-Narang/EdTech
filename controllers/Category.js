@@ -53,7 +53,7 @@ exports.categoryPageDetails = async (req, res) => {
         //category id is required
         const { categoryId } = req.body
         //get courses for specified category
-        const selectedCategory = await Category.findById(categoryId).populate("courses").exec()
+        const selectedCategory = await Category.findById(categoryId).populate("courses").exec()//shayad course aayega check while testing
         //validation for courses in category
         if (!selectedCategory) {
             return res.status(400).json({

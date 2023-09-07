@@ -136,3 +136,44 @@ exports.getAllRating = async (req, res) => {
 }
 
 //get all rating and reviews for specific course
+exports.getAllReviewsForCourse = async (req, res) => {
+    try {
+        //get course id
+        const courseId = req.body
+        //validation (check course exist or not)
+        if (!courseId) {
+            return res.status(400).json({
+                success: false,
+                message: "No course found for this id"
+            })
+        }
+        //get all rating and reviews and stored in database (if length > 0 means reviews are there else not)
+        const allReviews = await RatingAndReview.findById({ _id: courseId }).populate({
+            path: "user",
+            //select only fields with lastname,email.......
+            select: "firstName lastName email Image",
+        }).populate({
+            path: "course",
+            select: "courseName"
+        }).exec()
+
+        if (allReviews.length <= 0) {
+            return res.status(404).json({
+                success: false,
+                message: "No reviews found for this course"
+            })
+        }
+        //return response
+        res.status(200).json({
+            success: true,
+            message: "Rating and Reviews are fetched successfully for this courses"
+        })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(404).json({
+            success: false,
+            message: "Error getting all reviews for this course"
+        })
+    }
+}

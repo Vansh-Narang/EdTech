@@ -1,6 +1,6 @@
 const Course = require("../models/Course")
 //course is the schema / model
-const Tag = require("../models/Tag")
+const Category = require("../models/Category")
 //tag is the schema / model
 const User = require("../models/User")
 //user is the schema / model

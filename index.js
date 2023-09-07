@@ -43,7 +43,7 @@ app.use("/api/v1/auth", userRoutes)
 // app.use("/api/v1/course", courseRoutes)
 // app.use("/api/v1/payment", paymentRoutes)
 
-//default
+//default routes
 app.get("/", (req, res) => {
     return res.json({
         success: true,

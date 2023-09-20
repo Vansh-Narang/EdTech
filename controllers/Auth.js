@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 require("dotenv").config()
 const mailSender = require("../utils/mailSender")
+
 //otp send
 
 //FLOW->req.body se email le aao
@@ -119,7 +120,7 @@ exports.signup = async (req, res) => {
             })
         }
         //match the otp
-        else if (recentOTP.otp !== otp) {
+        else if (recentOTP[0].otp !== otp) {
             return res.status(404).json({
                 message: "otp not valid",
                 success: false,

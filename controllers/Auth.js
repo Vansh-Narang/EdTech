@@ -58,7 +58,8 @@ exports.sendOTP = async (req, res) => {
         console.log(error.message);
         return res.status(500).json({ success: false, error: error.message });
     }
-};//send otp te
+};
+//testing done
 
 
 //sign up
@@ -163,6 +164,10 @@ exports.signup = async (req, res) => {
         })
     }
 }
+//testing done
+
+
+
 //login
 exports.login = async (req, res) => {
     try {

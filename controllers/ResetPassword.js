@@ -99,7 +99,7 @@ exports.resetPassword = async (req, res) => {
         }
         //user ke data ko update kro (password ko hash krke)
         const hashedPassword = await bcrypt.hash(password, 10);
-        await User.findOne({ token: token },
+        await User.findOneAndUpdate({ token: token },
 
             //to do:::::::::::::check the method 
             { password: hashedPassword },

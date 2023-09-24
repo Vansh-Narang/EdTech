@@ -4,9 +4,9 @@ const { auth } = require("../middlewares/auth")
 
 const { updateProfile, deleteAccount, getUserDetails, getEnrolledCourses, updateDisplayPicture } = require("../controllers/Profile")
 
-router.put("/updateProfile", updateProfile)
-router.delete("/deleteAccount", deleteAccount)
-router.get("/getUserDetails", getUserDetails)
+router.put("/updateProfile", auth, updateProfile)
+router.delete("/deleteAccount", auth, deleteAccount)
+router.get("/getUserDetails", auth, getUserDetails)
 
 //get enrolled courses
 

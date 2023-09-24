@@ -59,6 +59,7 @@ exports.updateProfile = async (req, res) => {
         })
     }
 }
+//testing done
 
 //delete account
 exports.deleteAccount = async (req, res) => {

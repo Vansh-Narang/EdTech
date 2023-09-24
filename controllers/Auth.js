@@ -172,75 +172,69 @@ exports.signup = async (req, res) => {
 //login
 exports.login = async (req, res) => {
     try {
+        // Get email and password from request body
+        const { email, password } = req.body;
 
-        //get data from request
-
-        const { email, password } = req.body
-
-        //validation
-
+        // Check if email or password is missing
         if (!email || !password) {
+            // Return 400 Bad Request status code with error message
             return res.status(400).json({
                 success: false,
-                message: "All fields are required"
-            })
+                message: `Please Fill up All the Required Fields`,
+            });
         }
 
-        //user exist or not exist
+        // Find user with provided email
+        const user = await User.findOne({ email }).populate("additionalDetails");
 
-        const user = await User.findOne({ email }).populate("additionalDetails")
+        // If user not found with provided email
         if (!user) {
+            // Return 401 Unauthorized status code with error message
             return res.status(401).json({
                 success: false,
-                message: "User is not registered yet, please sign up"
-            })
+                message: `User is not Registered with Us Please SignUp to Continue`,
+            });
         }
 
-        //generate jwt token after matching the password
-
+        // Generate JWT token and Compare Password
         if (await bcrypt.compare(password, user.password)) {
+            const token = jwt.sign(
+                { email: user.email, id: user._id, accountType: user.accountType },
+                process.env.JWT_SECRET,
+                {
+                    expiresIn: "24h",
+                }
+            );
 
-            const payload = {
-                email: user.email,
-                id: user._id,
-                accountType: user.accountType
-            }
-            const token = jwt.sign(payload, process.env.JWT_SECRET, {
-                expiresIn: "24h"
-            })
-            user.token = token
-            //adding the token to the response data and making password null in the response after storing in the database
+            // Save token to user document in database
+            user.token = token;
             user.password = undefined;
-
+            // Set cookie for token and return success response
             const options = {
                 expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
                 httpOnly: true,
-            }
-            //create cookie and send response
+            };
             res.cookie("token", token, options).status(200).json({
                 success: true,
                 token,
                 user,
-                message: "Logged in"
-            })
-        }
-        else {
+                message: `User Login Success`,
+            });
+        } else {
             return res.status(401).json({
                 success: false,
-                message: "Password dont match"
-            })
+                message: `Password is incorrect`,
+            });
         }
-
     } catch (error) {
-        console.log(error);
-        return res.status(400).json({
-            message: "Cannot login",
-            error: error,
-            success: false
-
-        })
+        console.error(error);
+        // Return 500 Internal Server Error status code with error message
+        return res.status(500).json({
+            success: false,
+            message: `Login Failure Please Try Again`,
+        });
     }
-}
+};
 //testing done
 
 

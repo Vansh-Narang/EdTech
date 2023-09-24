@@ -14,7 +14,7 @@ router.post("/login", login)
 
 
 //reset passowrd
-router.post("/resetPasswordToken", resetPasswordToken)
-router.post("/resetPassword", resetPassword)
+router.post("/reset-password-token", resetPasswordToken)
+router.post("/reset-password", resetPassword)
 
 module.exports = router

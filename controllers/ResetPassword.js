@@ -1,9 +1,10 @@
 //It basically means forgot password so we will reset the password
 const User = require("../models/User")
 const mailSender = require("../utils/mailSender")
+const crypto = require("crypto")
+const bcrypt = require("bcrypt")
 
 exports.resetPasswordToken = async (req, res) => {
-
     try {
         //get mail
         const { email } = req.body
@@ -13,7 +14,7 @@ exports.resetPasswordToken = async (req, res) => {
             })
         }
         //check user for this email or email validations will
-        const existingUser = await User.findByEmail({ email })
+        const existingUser = await User.findOne({ email })
         if (!existingUser) {
             return res.status(400).send({
                 message: "No user found"
@@ -21,7 +22,8 @@ exports.resetPasswordToken = async (req, res) => {
         }
 
         //generate the token
-        const token = crypto.randomUUID();
+        const token = crypto.randomBytes(20).toString("hex");
+        console.log(token)
         //3000 for front end (generate the token)
         //update user by adding token and expiration time
 
@@ -30,29 +32,36 @@ exports.resetPasswordToken = async (req, res) => {
             { email: email },
             {
                 token: token,
-                resetPasswordExpires: Date.now() + 5 * 60 * 1000
+                resetPasswordExpires: Date.now() + 3600000,
             },
-            {
-                new: true,
-            })
+            { new: true }
+        ).populate("additionalDetails").exec();
 
+        console.log("Updating details")
+        console.log(updatedDetails);
+        console.log("Hiell")
         //create url
         const url = `http://localhost:3000/update-password/${token}`
         //send mail containing the url
         await mailSender(email, "Password Reset Link", `Password Reset Link:${url}`)
         //return response
         res.status(200).json({
+            data: updatedDetails,
             success: true,
             message: 'Email send successful'
         })
     } catch (error) {
+        console.log(error.message)
         return res.status(400).json({
+            error: error.message,
             success: false,
             message: 'Error sending password reset link'
         })
     }
 
-}
+}//testing done
+
+
 //reset password token(with expiry time)
 //reset password (db update)
 exports.resetPassword = async (req, res) => {
@@ -89,9 +98,9 @@ exports.resetPassword = async (req, res) => {
             })
         }
         //user ke data ko update kro (password ko hash krke)
-        const hashedPassword = await password.bcrypt(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
         await User.findOne({ token: token },
-            
+
             //to do:::::::::::::check the method 
             { password: hashedPassword },
             { new: true }
@@ -103,9 +112,10 @@ exports.resetPassword = async (req, res) => {
         })
     } catch (error) {
         res.status(401).json({
+            error: error.message,
             message: "Cant reset password",
             success: false,
         })
     }
 }
-
+//testing done

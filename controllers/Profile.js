@@ -197,7 +197,7 @@ exports.getEnrolledCourses = async (req, res) => {
             message: error.message,
         })
     }
-}
+}//empty
 
 
 //update profile picture (error)

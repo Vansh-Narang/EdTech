@@ -5,7 +5,7 @@ const CourseProgress = require("../models/CourseProgress")
 const Course = require("../models/Course")
 const User = require("../models/User")
 const { uploadImageToCloudinary } = require("../utils/imageUploader")
-// const mongoose = require("mongoose")
+const mongoose = require("mongoose")
 // const { convertSecondsToDuration } = require("../utils/secToDuration")
 
 //update profile
@@ -62,46 +62,51 @@ exports.updateProfile = async (req, res) => {
 //testing done
 
 //delete account
-exports.deleteAccount = async (req, res) => {
+exports.deleteProfile = async (req, res) => {
     try {
-        //fetch data
         const id = req.user.id
-
-        //validate profile
-        const userDetails = await User.findById(id)
-        if (!userDetails) {
+        console.log(id)
+        const user = await User.findById({ _id: id })
+        if (!user) {
             return res.status(404).json({
                 success: false,
-                message: "No profile for the id"
+                message: "User not found",
             })
         }
-        //find by id and delete
-        await Profile.findByIdAndDelete({ _id: userDetails.additionalDetails })
+        // Delete Assosiated Profile with the User
+        await Profile.findByIdAndDelete({
+            _id: new mongoose.Types.ObjectId(user.additionalDetails),
+        })
+        for (const courseId of user.courses) {
+            await Course.findByIdAndUpdate(
+                courseId,
+                { $pull: { studentsEnroled: id } },
+                { new: true }
+            )
+        }
+        // Now Delete User
         await User.findByIdAndDelete({ _id: id })
-        //json response
-
-
-        //to do [hw enroll when profile get deleted ]
-
-
         res.status(200).json({
             success: true,
-            message: "Deleted profile successfully"
+            message: "User deleted successfully",
         })
+        await CourseProgress.deleteMany({ userId: id })
     } catch (error) {
-        res.status(404).json({
-            success: false,
-            error: error,
-            message: "Error deleting profile"
-        })
+        console.log(error)
+        res
+            .status(500)
+            .json({ success: false, message: "User Cannot be deleted " })
     }
 }
+//testing done
+
 
 //get user details
 exports.getUserDetails = async (req, res) => {
     try {
         //fetch data
         const id = req.user.id
+        console.log(id)
         //validate
         if (!id) {
             return res.status(404).json({
@@ -110,20 +115,22 @@ exports.getUserDetails = async (req, res) => {
             })
         }
         //find
-        const userDetails = await User.findById(id).populate("addittionalDetails").exec()
+        const userDetails = await User.findById(id).populate("additionalDetails").exec()
         //return response
         res.status(200).json({
             success: true,
-            message: "Returned data"
+            message: "Returned data",
+            data: userDetails
         })
     } catch (error) {
+        console.log(error.message)
         res.status(404).json({
             success: false,
             error: error,
-            message: "Error deleting profile"
+            message: "Error fetching user details"
         })
     }
-}
+}//testing done
 
 //get enrolled courses
 exports.getEnrolledCourses = async (req, res) => {
@@ -191,6 +198,8 @@ exports.getEnrolledCourses = async (req, res) => {
         })
     }
 }
+
+
 //update profile picture (error)
 exports.updateDisplayPicture = async (req, res) => {
     try {

@@ -1,8 +1,12 @@
 //profile to bni hui hai sirf update krna hai
 
 const Profile = require("../models/Profile")
+const CourseProgress = require("../models/CourseProgress")
+const Course = require("../models/Course")
 const User = require("../models/User")
 const { uploadImageToCloudinary } = require("../utils/imageUploader")
+// const mongoose = require("mongoose")
+// const { convertSecondsToDuration } = require("../utils/secToDuration")
 
 //update profile
 exports.updateProfile = async (req, res) => {
@@ -15,6 +19,7 @@ exports.updateProfile = async (req, res) => {
             contactNumber = "",
             gender = "",
         } = req.body
+        // console.log(req.user)
         const id = req.user.id
 
         // Find the profile by id
@@ -185,7 +190,7 @@ exports.getEnrolledCourses = async (req, res) => {
         })
     }
 }
-//update profile picture
+//update profile picture (error)
 exports.updateDisplayPicture = async (req, res) => {
     try {
         const displayPicture = req.files.displayPicture
@@ -193,11 +198,16 @@ exports.updateDisplayPicture = async (req, res) => {
         const userId = req.user.id
         console.log(userId)
         console.log(req.user)
+        console.log("Logging")
+        console.log(process.env.FOLDER_NAME)
+        console.log(displayPicture)
         const image = await uploadImageToCloudinary(
             displayPicture,
             process.env.FOLDER_NAME,
+            1000,
+            1000,
         )
-        console.log(image)
+        // console.log(image)
         const updatedProfile = await User.findByIdAndUpdate(
             { _id: userId },
             { image: image.secure_url },

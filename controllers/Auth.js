@@ -161,9 +161,10 @@ exports.signup = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "User cannot be registered. Please try again.",
-        })
+        });
     }
-}
+};
+
 //testing done
 
 
@@ -202,17 +203,17 @@ exports.login = async (req, res) => {
             const payload = {
                 email: user.email,
                 id: user._id,
-                accountType: user.accountType.role
+                accountType: user.accountType
             }
             const token = jwt.sign(payload, process.env.JWT_SECRET, {
-                expiresIn: "2h"
+                expiresIn: "24h"
             })
             user.token = token
             //adding the token to the response data and making password null in the response after storing in the database
             user.password = undefined;
 
             const options = {
-                expires: new Date(Date.now() + 3 * 24 * 60 * 60 + 1000),
+                expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
                 httpOnly: true,
             }
             //create cookie and send response

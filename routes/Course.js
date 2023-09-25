@@ -34,7 +34,7 @@ router.post("/addSubSection", auth, isInstructor, createSubSection)
 
 
 /****************************************************category**************************/
-router.get("/showAllCategory", showAllCategories);
+router.get("/showAllCategories", showAllCategories);
 
 router.post("/createCategory", auth, createCategory)
 

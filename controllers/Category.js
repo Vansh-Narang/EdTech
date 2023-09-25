@@ -45,7 +45,7 @@ exports.showAllCategories = async (req, res) => {
             message: error,
         })
     }
-}
+}//testing done
 
 //category Page Details
 exports.categoryPageDetails = async (req, res) => {

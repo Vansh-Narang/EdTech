@@ -13,13 +13,13 @@ exports.createCourse = async (req, res) => {
         //fetch the data
 
         //accepting the tag as an id
-        const { courseName, courseDescription, whatYouWillLearn, price, tag } = req.body
+        const { courseName, courseDescription, whatYouWillLearn, price, category } = req.body
 
         //get thumbnail
         const thumbnail = req.files.thumbnailImage;
 
         //validation
-        if (!courseName || !courseDescription || !whatYouWillLearn || !price || !tag || !thumbnail) {
+        if (!courseName || !courseDescription || !whatYouWillLearn || !price || !category) {
             return res.status(400).json({
                 success: false,
                 message: "Please enter all fields"
@@ -40,8 +40,8 @@ exports.createCourse = async (req, res) => {
         }
 
         //check tags are valid
-        const tagDetails = await Tag.find(tag)
-        if (!tagDetails) {
+        const categoryDetails = await Category.findById(category)
+        if (!categoryDetails) {
             return res.status(404).json({
                 success: false,
                 message: "Tags not found"
@@ -50,7 +50,7 @@ exports.createCourse = async (req, res) => {
 
         //upload to cloudinary (thumbnail)
 
-        const thumbnailImage = await uploadImageToCloudinary(thumbnail, "Codehelper")
+        // const thumbnailImage = await uploadImageToCloudinary(thumbnail, "Codehelper")
 
         //create an entry for new course
         const newCourse = await Course.create({
@@ -59,8 +59,8 @@ exports.createCourse = async (req, res) => {
             instructor: instructorDetails._id,
             whatYouWillLearn,
             price,
-            tag: tagDetails._id,
-            thumbnail: thumbnailImage.secure_url
+            category: categoryDetails._id,
+            // thumbnail: thumbnailImage.secure_url
         })
 
         //add the new course to user schema
@@ -77,13 +77,14 @@ exports.createCourse = async (req, res) => {
         //update the tag schema
 
         return res.status(200).json({
-            message: true,
+            message: "created the course successfully",
             success: true,
         })
     } catch (error) {
         res.status(500).json({
+
             success: false,
-            message: error
+            message: error.message
         })
     }
 }

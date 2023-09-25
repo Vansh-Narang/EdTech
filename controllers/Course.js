@@ -117,8 +117,8 @@ exports.showAllCourses = async (req, res) => {
     }
 }//testing done
 
-//tags and course.js files are only be used by admin through the middleware
 
+//tags and course.js files are only be used by admin through the middleware
 //course entire details to be returned make a controller for the same
 exports.getCourseDetails = async (req, res) => {
     try {
@@ -134,7 +134,7 @@ exports.getCourseDetails = async (req, res) => {
         //find and populate because we will get the object id
         const courseDetails = await Course.find(
             { _id: courseId }).populate({
-                path: "instrutor",
+                path: "instructor",
                 //instructor ko popluate fir uske aander addittional Details usse bhi populate
                 populate: {
                     path: "additionalDetails"
@@ -157,6 +157,7 @@ exports.getCourseDetails = async (req, res) => {
             })
         }
         res.status(200).json({
+            data: courseDetails,
             success: true,
             message: "Success fetched data"
         })

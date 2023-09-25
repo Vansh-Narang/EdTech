@@ -115,7 +115,7 @@ exports.showAllCourses = async (req, res) => {
             message: 'Cannot fetch all course'
         })
     }
-}
+}//testing done
 
 //tags and course.js files are only be used by admin through the middleware
 

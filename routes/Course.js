@@ -14,6 +14,8 @@ const { auth, isInstructor, isStudent, isAdmin } = require("../middlewares/auth"
 //courses will only be created by instructor
 router.post("/createCourse", auth, isInstructor, createCourse)
 
+router.get("/getAllCourses", auth, isInstructor, showAllCourses)
+
 //add a section to a course
 router.post("/addSection", auth, isInstructor, createSection)
 

@@ -41,7 +41,7 @@ exports.createSection = async (req, res) => {
             message: "Unable to create section"
         })
     }
-}
+}//testing done
 
 //update section
 exports.updateSection = async (req, res) => {

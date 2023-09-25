@@ -6,21 +6,23 @@ exports.createSubSection = async (req, res) => {
         //data fetch
         const { sectionId, title, timeDuration, description } = req.body;
         //extract file/video
-        const video = req.files.videoFile;
+        // const video = req.files.videoFile;
         //validation
-        if (!sectionId || !title || !timeDuration || !description || !video) {
+        if (!sectionId || !title || !timeDuration || !description)
+        // !video)
+        {
             return res.status(200).json({
                 success: false,
             })
         }
         //upload video to cloudinary
-        const uploadDetails = await uploadImageToCloudinary(video, process.env.FOLDERNAME)
+        // const uploadDetails = await uploadImageToCloudinary(video, process.env.FOLDERNAME)
         //create a sub-section
         const subSectionDetails = await Subsection.create({
             title,
             timeDuration,
             description,
-            video: uploadDetails.secure_url,
+            // video: uploadDetails.secure_url,
         })
         //update section with this subsection objectId
         const updatedSection = await Section.findByIdAndUpdate(sectionId,
@@ -36,7 +38,7 @@ exports.createSubSection = async (req, res) => {
         return res.json({
             success: true,
             message: "Subsection Created successfully",
-            updatedSection
+            data: updatedSection
         })
     } catch (error) {
         return res.status(400).json({
@@ -44,7 +46,7 @@ exports.createSubSection = async (req, res) => {
             message: "Cannot  Create Subsection ",
         })
     }
-}
+}//testing done
 
 //update
 exports.updateSubSection = async (req, res) => {

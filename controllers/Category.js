@@ -28,7 +28,7 @@ exports.createCategory = async (req, res) => {
             success: false
         })
     }
-}
+}//testing done
 
 //get all tags
 exports.showAllCategories = async (req, res) => {

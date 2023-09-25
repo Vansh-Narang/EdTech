@@ -87,7 +87,7 @@ exports.createCourse = async (req, res) => {
             message: error.message
         })
     }
-}
+}//testing done but image upload left
 
 //get all courses
 exports.showAllCourses = async (req, res) => {

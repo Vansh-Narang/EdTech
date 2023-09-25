@@ -1,6 +1,6 @@
 const Section = require("../models/Section")
 const Course = require("../models/Course")
-
+const SubSection = require("../models/SubSection")
 
 
 exports.createSection = async (req, res) => {
@@ -73,37 +73,51 @@ exports.updateSection = async (req, res) => {
             message: "Unable to update the section"
         })
     }
-}
+}//testing done
 
 //delete section
 exports.deleteSection = async (req, res) => {
     try {
-        //ask for the section id that we are asking the id from routes :id
-        const { sectionId } = req.params;
 
-        //find the section
-        if (!sectionId) {
+        const { sectionId, courseId } = req.body;
+        await Course.findByIdAndUpdate(courseId, {
+            $pull: {
+                courseContent: sectionId,
+            }
+        })
+        const section = await Section.findById(sectionId);
+        console.log(sectionId, courseId);
+        if (!section) {
             return res.status(404).json({
                 success: false,
-                message: 'Cannot find the id',
+                message: "Section not Found",
             })
         }
-        //make the call to db to delete the section
+
+        //delete sub section
+        await SubSection.deleteMany({ _id: { $in: section.subSection } });
+
         await Section.findByIdAndDelete(sectionId);
 
-        //also delete the section id from course-> bcz when we created the section we push the id to the course so when deleted we should delete the same from course model
-
-
+        //find the updated course and return 
+        const course = await Course.findById(courseId).populate({
+            path: "courseContent",
+            populate: {
+                path: "subSection"
+            }
+        })
+            .exec();
 
         res.status(200).json({
             success: true,
-            message: "Section deleted successfully",
-        })
-
+            message: "Section deleted",
+            data: course
+        });
     } catch (error) {
-        return res.status(400).json({
+        console.error("Error deleting section:", error);
+        res.status(500).json({
             success: false,
-            message: "Unable to delete the section"
-        })
+            message: "Internal server error",
+        });
     }
-}
+};   //testing done
